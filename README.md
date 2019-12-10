@@ -1,7 +1,7 @@
 # coffee-yelp
 BY:
 Akshay Prabhakar
-Nikki Consolacion
+Nicole Consolacion
 Matthew Garcia
 Matthew Lang
 
