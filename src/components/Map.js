@@ -3,30 +3,16 @@ import MapView from 'react-native-maps';
 import { Linking, Alert } from 'react-native';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { YELP_API_KEY } from 'react-native-dotenv';
 
 
 export default class Map extends React.Component {
   constructor() {
     super();
-
     this.state = {
       isLoading: true,
       markers: [],
       origin: { latitude: 35.294401000, longitude: -120.670121000 },
-    };
-
-    config = {
-      headers: {
-        Authorization: `Bearer API goes here`,
-      },
-      params: {
-        term: 'Coffee',
-        raduis: 1,
-        latitude: this.state.origin.latitude,
-        longitude: this.state.origin.longitude,
-        sort_by: 'distance',
-        limit: 15,
-      },
     };
   }
 
@@ -38,11 +24,12 @@ export default class Map extends React.Component {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
           };
-          config.params.latitude = newOrigin.latitude;
-          config.params.longitude = newOrigin.longitude;
 
           this.setState({
-            origin: newOrigin,
+            origin: {
+              latitude: newOrigin.latitude,
+              longitude: newOrigin.longitude
+            },
           });
           resolve(true);
         },
@@ -62,13 +49,17 @@ export default class Map extends React.Component {
   }
 
   fetchMarkerData() {
-    // changing to this api because the other one did not work
+
     return axios
-      .get(`https://api.yelp.com/v3/businesses/search`, config)
+      .get(`https://api.yelp.com/v3/businesses/search?term=coffee&latitude=${this.state.origin.latitude}&longitude=${this.state.origin.longitude}`, {
+        headers: {
+          Authorization: `Bearer ${YELP_API_KEY}`,
+        }
+      })
       .then(responseJson => {
         this.setState({
           isLoading: false,
-          markers: responseJson.data.businesses.map(x => x),
+          markers: responseJson.data.businesses,
         });
       })
       .catch(error => {
@@ -108,8 +99,8 @@ export default class Map extends React.Component {
                   description={addressOfMarker}
                   onPress={() =>
                     Alert.alert(
-                      'Redirect to yelp?',
-                      'or cancel to wing it ;) ',
+                      'Redirect to website?',
+                      'Or click cancel to stay in app',
                       [
                         {
                           text: 'Cancel',
