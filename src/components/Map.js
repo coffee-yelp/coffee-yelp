@@ -13,6 +13,7 @@ export default class Map extends React.Component {
       isLoading: true,
       markers: [],
       origin: { latitude: 35.294401000, longitude: -120.670121000 },
+      category: 'coffee'
     };
   }
 
@@ -51,7 +52,7 @@ export default class Map extends React.Component {
   fetchMarkerData() {
 
     return axios
-      .get(`https://api.yelp.com/v3/businesses/search?term=coffee&latitude=${this.state.origin.latitude}&longitude=${this.state.origin.longitude}`, {
+      .get(`https://api.yelp.com/v3/businesses/search?term=${this.state.category}&latitude=${this.state.origin.latitude}&longitude=${this.state.origin.longitude}`, {
         headers: {
           Authorization: `Bearer ${YELP_API_KEY}`,
         }
