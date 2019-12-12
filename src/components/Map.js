@@ -91,17 +91,27 @@ export default class Map extends React.Component {
 
               const nameOfMarker = `${marker.name}(${marker.rating} rating)`;
               const addressOfMarker = `${marker.location.address1}, ${marker.location.city}`;
+              let hasVisited = false;
+
               return (
                 <MapView.Marker
                   key={marker.id}
                   coordinate={coords}
                   title={nameOfMarker}
                   description={addressOfMarker}
+                  color={ '#2cd142'}
                   onPress={() =>
                     Alert.alert(
                       'Redirect to website?',
                       'Or click cancel to stay in app',
                       [
+                        {
+                          text: hasVisited ? 'Unmark as visited' : 'Mark as visited',
+                          onPress: () => {
+                            hasVisited = !hasVisited;
+                            console.log('hasVisited: ', hasVisited);
+                          },
+                        },
                         {
                           text: 'Cancel',
                           onPress: () => console.log('Cancel Pressed'),
@@ -109,11 +119,11 @@ export default class Map extends React.Component {
                         },
                         { text: 'OK', onPress: () => Linking.openURL(url) },
                       ],
-                      { cancelable: false }
+                      { cancelable: true }
                     )}
                 >
 
-                  <Icon name="map-marker" size={30} color={'#ff0000'} />
+                  <Icon name="map-marker" size={30} color={ hasVisited === true ? '#2cd142' : '#ff0000' } />
 
                 </MapView.Marker>
               );
