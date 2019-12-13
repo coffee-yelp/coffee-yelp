@@ -13,6 +13,7 @@ export default class Map extends React.Component {
       isLoading: true,
       markers: [],
       origin: { latitude: 35.294401000, longitude: -120.670121000 },
+      category: 'coffee'
     };
   }
 
@@ -51,7 +52,7 @@ export default class Map extends React.Component {
   fetchMarkerData() {
 
     return axios
-      .get(`https://api.yelp.com/v3/businesses/search?term=coffee&latitude=${this.state.origin.latitude}&longitude=${this.state.origin.longitude}`, {
+      .get(`https://api.yelp.com/v3/businesses/search?term=${this.state.category}&latitude=${this.state.origin.latitude}&longitude=${this.state.origin.longitude}`, {
         headers: {
           Authorization: `Bearer ${YELP_API_KEY}`,
         }
@@ -91,17 +92,27 @@ export default class Map extends React.Component {
 
               const nameOfMarker = `${marker.name}(${marker.rating} rating)`;
               const addressOfMarker = `${marker.location.address1}, ${marker.location.city}`;
+              let hasConquered = false;
+
               return (
                 <MapView.Marker
                   key={marker.id}
                   coordinate={coords}
                   title={nameOfMarker}
                   description={addressOfMarker}
+                  color={ '#2cd142'}
                   onPress={() =>
                     Alert.alert(
                       'Redirect to website?',
                       'Or click cancel to stay in app',
                       [
+                        {
+                          text: hasConquered ? 'Unmark as conquered' : 'Mark as conquered',
+                          onPress: () => {
+                            hasConquered = !hasConquered;
+                            console.log('hasConquered: ', hasConquered);
+                          },
+                        },
                         {
                           text: 'Cancel',
                           onPress: () => console.log('Cancel Pressed'),
@@ -109,11 +120,11 @@ export default class Map extends React.Component {
                         },
                         { text: 'OK', onPress: () => Linking.openURL(url) },
                       ],
-                      { cancelable: false }
+                      { cancelable: true }
                     )}
                 >
 
-                  <Icon name="map-marker" size={30} color={'#ff0000'} />
+                  <Icon name="map-marker" size={30} color={ hasConquered === true ? '#2cd142' : '#ff0000' } />
 
                 </MapView.Marker>
               );
