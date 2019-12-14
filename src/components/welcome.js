@@ -2,18 +2,10 @@ import React from 'react';
 import { Header } from 'react-native-elements';
 import { StyleSheet, Text, View, Button } from 'react-native';
 
-import Wecome from './welcome';
-
-class Home extends React.Component {
+class Wecome extends React.Component {
   render() {
     return (
-        <View style={styles.container}>
-          {/* <Header
-            leftComponent={{ icon: 'menu', style: { color: 'black'} }}
-            centerComponent={{ text: 'Coffee-Coffee!!!', style: { color: 'black' } }}
-            rightComponent={{ icon: 'home', style: { color: 'black' } }}
-          /> */}
-          {/* <Wecome/> */}
+        <View style={styles.container} >
           <Text>Wecome to Coffee Conqueror</Text>
           <Button title='Go To Map Page'
           onPress={
@@ -34,4 +26,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default Home
+export default Wecome
