@@ -1,5 +1,5 @@
 import firebase from 'firebase';
-import 'firebase/firestore';
+import '@firebase/firestore';
 import { API_KEY, AUTH_DOMAIN, DATABASE_URL, PROJECT_ID, STORAGE_BUCKET, MESSAGE_SENDER_ID, APP_ID, MEASUREMENT_ID } from 'react-native-dotenv';
 
 const firebaseConfig = {
