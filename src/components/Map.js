@@ -1,9 +1,11 @@
 import React from 'react';
 import MapView from 'react-native-maps';
-import { Linking, Alert, AsyncStorage } from 'react-native';
+import { Linking, Alert, AsyncStorage, View } from 'react-native';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { YELP_API_KEY } from 'react-native-dotenv';
+import { Searchbar } from 'react-native-paper';
+
 
 
 export default class Map extends React.Component {
@@ -52,6 +54,12 @@ export default class Map extends React.Component {
     await this.fetchMarkerData();
   }
 
+  componentDidUpdate(prevProps, prevState){
+    if(this.state.category !== prevState.category ){
+      this.fetchMarkerData();
+    }
+  }
+
   async fetchMarkerData() {
 
     return axios
@@ -73,7 +81,9 @@ export default class Map extends React.Component {
 
 
   render() {
+    const { category } = this.state;
     return (
+
       <MapView
         style={{ flex: 1 }}
         provider="google"
@@ -84,6 +94,11 @@ export default class Map extends React.Component {
           longitudeDelta: 0.0100,
         }}
       >
+        <Searchbar
+          placeholder="Search"
+          onChangeText={query => { this.setState({ category: query }); }}
+          value={category}
+        />
         {this.state.isLoading
           ? null
           : this.state.markers.map(marker => {
