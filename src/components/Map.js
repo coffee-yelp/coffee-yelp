@@ -4,6 +4,7 @@ import { Linking, Alert, AsyncStorage } from 'react-native';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { YELP_API_KEY } from 'react-native-dotenv';
+import { Searchbar } from 'react-native-paper';
 
 
 export default class Map extends React.Component {
@@ -38,7 +39,6 @@ export default class Map extends React.Component {
           resolve(true);
         },
         err => {
-          console.log('error');
           console.log(err);
           reject(reject);
         },
@@ -50,6 +50,12 @@ export default class Map extends React.Component {
   async componentDidMount() {
     await this.getLocation();
     await this.fetchMarkerData();
+  }
+
+  componentDidUpdate(prevProps, prevState){
+    if(this.state.category !== prevState.category ){
+      this.fetchMarkerData();
+    }
   }
 
   async fetchMarkerData() {
@@ -73,7 +79,9 @@ export default class Map extends React.Component {
 
 
   render() {
+    const { category } = this.state;
     return (
+
       <MapView
         style={{ flex: 1 }}
         provider="google"
@@ -84,6 +92,11 @@ export default class Map extends React.Component {
           longitudeDelta: 0.0100,
         }}
       >
+        <Searchbar
+          placeholder="Search"
+          onChangeText={query => { this.setState({ category: query }); }}
+          value={category}
+        />
         {this.state.isLoading
           ? null
           : this.state.markers.map(marker => {
@@ -122,8 +135,6 @@ export default class Map extends React.Component {
                               delete this.state.conquered[markerId];
                               this.setState({ conquered: {...this.state.conquered }})
                             }
-                            console.log('conquered: ', this.state.conquered);
-                            console.log('marker id: ', marker.id);
                           },
                         },
                         {
