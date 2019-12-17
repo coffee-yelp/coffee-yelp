@@ -1,11 +1,10 @@
 import React from 'react';
 import MapView from 'react-native-maps';
-import { Linking, Alert, AsyncStorage, View } from 'react-native';
+import { Linking, Alert, AsyncStorage } from 'react-native';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { YELP_API_KEY } from 'react-native-dotenv';
 import { Searchbar } from 'react-native-paper';
-
 
 
 export default class Map extends React.Component {
@@ -40,7 +39,6 @@ export default class Map extends React.Component {
           resolve(true);
         },
         err => {
-          console.log('error');
           console.log(err);
           reject(reject);
         },
@@ -137,8 +135,6 @@ export default class Map extends React.Component {
                               delete this.state.conquered[markerId];
                               this.setState({ conquered: {...this.state.conquered }})
                             }
-                            console.log('conquered: ', this.state.conquered);
-                            console.log('marker id: ', marker.id);
                           },
                         },
                         {
