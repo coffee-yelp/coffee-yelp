@@ -6,12 +6,6 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { YELP_API_KEY } from 'react-native-dotenv';
 
 
-// let conquered = {
-//   "lNbKeOfCMTNkoihZHqrbrg": "Blue Bottle Coffee"
-// }; //just an example placeholder for the AsyncStorage object
-
-console.log('AsyncStorage: ', AsyncStorage);
-
 export default class Map extends React.Component {
   constructor() {
     super();
@@ -101,7 +95,6 @@ export default class Map extends React.Component {
               const markerId = marker.id;
               const nameOfMarker = `${marker.name}(${marker.rating} rating)`;
               const addressOfMarker = `${marker.location.address1}, ${marker.location.city}`;
-              //let hasConquered = false;
 
               return (
                 <MapView.Marker
@@ -119,7 +112,7 @@ export default class Map extends React.Component {
                           text: !(markerId in this.state.conquered) ? 'Mark as conquered' : 'Unmark as conquered',
                           onPress: () => {
                             if (!(markerId in this.state.conquered)){
-                              // this.state.conquered[markerId] = marker.name;
+
                               this.setState({ conquered: {
                                 ...this.state.conquered,
                                 [markerId]: marker.name
@@ -143,8 +136,6 @@ export default class Map extends React.Component {
                       { cancelable: true }
                     )}
                 >
-
-                  {/* <Icon name="map-marker" size={30} color={ hasConquered === true ? '#2cd142' : '#ff0000' } /> */}
 
                 </MapView.Marker>
               );
