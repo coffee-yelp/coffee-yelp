@@ -6,9 +6,9 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { YELP_API_KEY } from 'react-native-dotenv';
 
 
-let conquered = {
-  "lNbKeOfCMTNkoihZHqrbrg": "Blue Bottle Coffee"
-}; //just an example placeholder for the AsyncStorage object
+// let conquered = {
+//   "lNbKeOfCMTNkoihZHqrbrg": "Blue Bottle Coffee"
+// }; //just an example placeholder for the AsyncStorage object
 
 console.log('AsyncStorage: ', AsyncStorage);
 
@@ -19,7 +19,10 @@ export default class Map extends React.Component {
       isLoading: true,
       markers: [],
       origin: { latitude: 35.294401000, longitude: -120.670121000 },
-      category: 'coffee'
+      category: 'coffee',
+      conquered: {
+        "lNbKeOfCMTNkoihZHqrbrg": "Blue Bottle Coffee"
+      }
     };
   }
 
@@ -98,7 +101,7 @@ export default class Map extends React.Component {
               const markerId = marker.id;
               const nameOfMarker = `${marker.name}(${marker.rating} rating)`;
               const addressOfMarker = `${marker.location.address1}, ${marker.location.city}`;
-              let hasConquered = false;
+              //let hasConquered = false;
 
               return (
                 <MapView.Marker
@@ -106,22 +109,27 @@ export default class Map extends React.Component {
                   coordinate={coords}
                   title={nameOfMarker}
                   description={addressOfMarker}
-                  pinColor={ !(markerId in conquered) ? '#ff0000' : '#2cd142'}
+                  pinColor={ !(markerId in this.state.conquered) ? '#ff0000' : '#2cd142'}
                   onPress={() =>
                     Alert.alert(
                       'Redirect to website?',
                       'Or click cancel to stay in app',
                       [
                         {
-                          text: !(markerId in conquered) ? 'Mark as conquered' : 'Unmark as conquered',
+                          text: !(markerId in this.state.conquered) ? 'Mark as conquered' : 'Unmark as conquered',
                           onPress: () => {
-                            if (!(markerId in conquered)){
-                              conquered[markerId] = marker.name;
+                            if (!(markerId in this.state.conquered)){
+                              // this.state.conquered[markerId] = marker.name;
+                              this.setState({ conquered: {
+                                ...this.state.conquered,
+                                [markerId]: marker.name
+                              }})
                             }
-                            else if (markerId in conquered) {
-                              delete conquered[markerId];
+                            else if (markerId in this.state.conquered) {
+                              delete this.state.conquered[markerId];
+                              this.setState({ conquered: {...this.state.conquered }})
                             }
-                            console.log('conquered: ', conquered);
+                            console.log('conquered: ', this.state.conquered);
                             console.log('marker id: ', marker.id);
                           },
                         },
