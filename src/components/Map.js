@@ -119,7 +119,7 @@ export default class Map extends React.Component {
                               conquered[markerId] = marker.name;
                             }
                             else if (markerId in conquered) {
-                              delete conquered.markerId;
+                              delete conquered[markerId];
                             }
                             console.log('conquered: ', conquered);
                             console.log('marker id: ', marker.id);
