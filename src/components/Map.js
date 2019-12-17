@@ -130,7 +130,7 @@ export default class Map extends React.Component {
                           onPress: () => console.log('Cancel Pressed'),
                           style: 'cancel',
                         },
-                        { text: 'OK', onPress: () => Linking.openURL(url) },
+                        { text: 'Redirect to website', onPress: () => Linking.openURL(url) },
                       ],
                       { cancelable: true }
                     )}
