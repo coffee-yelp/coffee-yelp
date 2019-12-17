@@ -5,6 +5,9 @@ import axios from 'axios';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { YELP_API_KEY } from 'react-native-dotenv';
 
+let conquered = {
+  "lNbKeOfCMTNkoihZHqrbrg": "Blue Bottle Coffee"
+}; //just an example placeholder for the AsyncStorage object
 
 export default class Map extends React.Component {
   constructor() {
@@ -49,7 +52,7 @@ export default class Map extends React.Component {
     await this.fetchMarkerData();
   }
 
-  fetchMarkerData() {
+  async fetchMarkerData() {
 
     return axios
       .get(`https://api.yelp.com/v3/businesses/search?term=${this.state.category}&latitude=${this.state.origin.latitude}&longitude=${this.state.origin.longitude}`, {
@@ -89,28 +92,34 @@ export default class Map extends React.Component {
                 longitude: marker.coordinates.longitude,
               };
               const url = marker.url;
-
+              const markerId = marker.id;
               const nameOfMarker = `${marker.name}(${marker.rating} rating)`;
               const addressOfMarker = `${marker.location.address1}, ${marker.location.city}`;
               let hasConquered = false;
 
               return (
                 <MapView.Marker
-                  key={marker.id}
+                  key={markerId}
                   coordinate={coords}
                   title={nameOfMarker}
                   description={addressOfMarker}
-                  color={ '#2cd142'}
+                  pinColor={ !(markerId in conquered) ? '#ff0000' : '#2cd142'}
                   onPress={() =>
                     Alert.alert(
                       'Redirect to website?',
                       'Or click cancel to stay in app',
                       [
                         {
-                          text: hasConquered ? 'Unmark as conquered' : 'Mark as conquered',
+                          text: !(markerId in conquered) ? 'Mark as conquered' : 'Unmark as conquered',
                           onPress: () => {
-                            hasConquered = !hasConquered;
-                            console.log('hasConquered: ', hasConquered);
+                            if (!(markerId in conquered)){
+                              conquered[markerId] = marker.name
+                            }
+                            else if (markerId in conquered) {
+                              delete conquered.markerId;
+                            }
+                            console.log('conquered: ', conquered);
+                            console.log('marker id: ', marker.id);
                           },
                         },
                         {
@@ -124,7 +133,7 @@ export default class Map extends React.Component {
                     )}
                 >
 
-                  <Icon name="map-marker" size={30} color={ hasConquered === true ? '#2cd142' : '#ff0000' } />
+                  {/* <Icon name="map-marker" size={30} color={ hasConquered === true ? '#2cd142' : '#ff0000' } /> */}
 
                 </MapView.Marker>
               );
