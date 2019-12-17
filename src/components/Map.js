@@ -1,13 +1,16 @@
 import React from 'react';
 import MapView from 'react-native-maps';
-import { Linking, Alert } from 'react-native';
+import { Linking, Alert, AsyncStorage } from 'react-native';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { YELP_API_KEY } from 'react-native-dotenv';
 
+
 let conquered = {
   "lNbKeOfCMTNkoihZHqrbrg": "Blue Bottle Coffee"
 }; //just an example placeholder for the AsyncStorage object
+
+console.log('AsyncStorage: ', AsyncStorage);
 
 export default class Map extends React.Component {
   constructor() {
@@ -113,7 +116,7 @@ export default class Map extends React.Component {
                           text: !(markerId in conquered) ? 'Mark as conquered' : 'Unmark as conquered',
                           onPress: () => {
                             if (!(markerId in conquered)){
-                              conquered[markerId] = marker.name
+                              conquered[markerId] = marker.name;
                             }
                             else if (markerId in conquered) {
                               delete conquered.markerId;
