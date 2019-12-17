@@ -1,9 +1,11 @@
 import React from 'react';
 import MapView from 'react-native-maps';
-import { Linking, Alert } from 'react-native';
+import { Linking, Alert, AsyncStorage, View } from 'react-native';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { YELP_API_KEY } from 'react-native-dotenv';
+import { Searchbar } from 'react-native-paper';
+
 
 
 export default class Map extends React.Component {
@@ -13,6 +15,10 @@ export default class Map extends React.Component {
       isLoading: true,
       markers: [],
       origin: { latitude: 35.294401000, longitude: -120.670121000 },
+      category: 'coffee',
+      conquered: {
+        "lNbKeOfCMTNkoihZHqrbrg": "Blue Bottle Coffee"
+      }
     };
   }
 
@@ -48,10 +54,16 @@ export default class Map extends React.Component {
     await this.fetchMarkerData();
   }
 
-  fetchMarkerData() {
+  componentDidUpdate(prevProps, prevState){
+    if(this.state.category !== prevState.category ){
+      this.fetchMarkerData();
+    }
+  }
+
+  async fetchMarkerData() {
 
     return axios
-      .get(`https://api.yelp.com/v3/businesses/search?term=coffee&latitude=${this.state.origin.latitude}&longitude=${this.state.origin.longitude}`, {
+      .get(`https://api.yelp.com/v3/businesses/search?term=${this.state.category}&latitude=${this.state.origin.latitude}&longitude=${this.state.origin.longitude}`, {
         headers: {
           Authorization: `Bearer ${YELP_API_KEY}`,
         }
@@ -69,7 +81,9 @@ export default class Map extends React.Component {
 
 
   render() {
+    const { category } = this.state;
     return (
+
       <MapView
         style={{ flex: 1 }}
         provider="google"
@@ -80,6 +94,11 @@ export default class Map extends React.Component {
           longitudeDelta: 0.0100,
         }}
       >
+        <Searchbar
+          placeholder="Search"
+          onChangeText={query => { this.setState({ category: query }); }}
+          value={category}
+        />
         {this.state.isLoading
           ? null
           : this.state.markers.map(marker => {
@@ -88,32 +107,50 @@ export default class Map extends React.Component {
                 longitude: marker.coordinates.longitude,
               };
               const url = marker.url;
-
+              const markerId = marker.id;
               const nameOfMarker = `${marker.name}(${marker.rating} rating)`;
               const addressOfMarker = `${marker.location.address1}, ${marker.location.city}`;
+
               return (
                 <MapView.Marker
-                  key={marker.id}
+                  key={markerId}
                   coordinate={coords}
                   title={nameOfMarker}
                   description={addressOfMarker}
+                  pinColor={ !(markerId in this.state.conquered) ? '#ff0000' : '#2cd142'}
                   onPress={() =>
                     Alert.alert(
                       'Redirect to website?',
                       'Or click cancel to stay in app',
                       [
                         {
+                          text: !(markerId in this.state.conquered) ? 'Mark as conquered' : 'Unmark as conquered',
+                          onPress: () => {
+                            if (!(markerId in this.state.conquered)){
+
+                              this.setState({ conquered: {
+                                ...this.state.conquered,
+                                [markerId]: marker.name
+                              }})
+                            }
+                            else if (markerId in this.state.conquered) {
+                              delete this.state.conquered[markerId];
+                              this.setState({ conquered: {...this.state.conquered }})
+                            }
+                            console.log('conquered: ', this.state.conquered);
+                            console.log('marker id: ', marker.id);
+                          },
+                        },
+                        {
                           text: 'Cancel',
                           onPress: () => console.log('Cancel Pressed'),
                           style: 'cancel',
                         },
-                        { text: 'OK', onPress: () => Linking.openURL(url) },
+                        { text: 'Redirect to website', onPress: () => Linking.openURL(url) },
                       ],
-                      { cancelable: false }
+                      { cancelable: true }
                     )}
                 >
-
-                  <Icon name="map-marker" size={30} color={'#ff0000'} />
 
                 </MapView.Marker>
               );
