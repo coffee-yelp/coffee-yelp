@@ -1,5 +1,4 @@
 import React from 'react';
-
 import Home from './src/components/Home';
 import MapPage from './src/components/MapPage';
 
