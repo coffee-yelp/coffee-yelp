@@ -7,7 +7,7 @@ class Home extends React.Component {
     return (
         <View style={styles.container}>
           <Text style={styles.title} >Welcome to Coffee Conqueror</Text>
-          <MaterialCommunityIcons style={styles.coffee} name="coffee-to-go" size={50} color="#696969" 
+          <MaterialCommunityIcons style={styles.coffee} name="coffee-to-go" size={50} color="#696969"
           onPress={
             ()=> this.props.navigation.navigate('MapPage')
           }
@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     justifyContent: 'center',
-    backgroundColor: 'lightGrey'
+    backgroundColor: '#d3d3d3'
   },
   title: {
     fontSize: 55,
