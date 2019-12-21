@@ -1,21 +1,13 @@
 import React from 'react';
-import { Header } from 'react-native-elements';
 import { StyleSheet, Text, View, Button } from 'react-native';
-
-import Wecome from './welcome';
+import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
 
 class Home extends React.Component {
   render() {
     return (
         <View style={styles.container}>
-          {/* <Header
-            leftComponent={{ icon: 'menu', style: { color: 'black'} }}
-            centerComponent={{ text: 'Coffee-Coffee!!!', style: { color: 'black' } }}
-            rightComponent={{ icon: 'home', style: { color: 'black' } }}
-          /> */}
-          {/* <Wecome/> */}
-          <Text>Wecome to Coffee Conqueror</Text>
-          <Button title='Go To Map Page'
+          <Text style={styles.title} >Welcome to Coffee Conqueror</Text>
+          <MaterialCommunityIcons style={styles.coffee} name="coffee-to-go" size={50} color="#696969"
           onPress={
             ()=> this.props.navigation.navigate('MapPage')
           }
@@ -29,8 +21,22 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#d3d3d3'
+  },
+  title: {
+    fontSize: 55,
+    fontFamily: 'Bodoni 72',
+    paddingBottom: 40,
+    paddingLeft: 10,
+    paddingRight: 10,
+    textAlign: 'center',
+  },
+  coffee: {
+    fontSize: 100,
+    paddingTop: 10,
+    justifyContent: 'center',
+    textAlign: 'center',
   }
 })
 

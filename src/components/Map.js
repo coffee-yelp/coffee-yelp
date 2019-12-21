@@ -1,11 +1,10 @@
 import React from 'react';
 import MapView from 'react-native-maps';
-import { Linking, Alert, AsyncStorage, View } from 'react-native';
+import { Linking, Alert, AsyncStorage } from 'react-native';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { YELP_API_KEY } from 'react-native-dotenv';
 import { Searchbar } from 'react-native-paper';
-
 
 
 export default class Map extends React.Component {
@@ -16,9 +15,7 @@ export default class Map extends React.Component {
       markers: [],
       origin: { latitude: 35.294401000, longitude: -120.670121000 },
       category: 'coffee',
-      conquered: {
-        "lNbKeOfCMTNkoihZHqrbrg": "Blue Bottle Coffee"
-      }
+      conquered: []
     };
   }
 
@@ -40,7 +37,6 @@ export default class Map extends React.Component {
           resolve(true);
         },
         err => {
-          console.log('error');
           console.log(err);
           reject(reject);
         },
@@ -52,6 +48,7 @@ export default class Map extends React.Component {
   async componentDidMount() {
     await this.getLocation();
     await this.fetchMarkerData();
+    await this.getConqueredData();
   }
 
   componentDidUpdate(prevProps, prevState){
@@ -79,9 +76,14 @@ export default class Map extends React.Component {
       });
   }
 
+  async getConqueredData() {
+    let conqueredData = await AsyncStorage.getAllKeys();
+    this.setState({ conquered: conqueredData });
+  }
+
 
   render() {
-    const { category } = this.state;
+    const { category, conquered } = this.state;
     return (
 
       <MapView
@@ -117,28 +119,28 @@ export default class Map extends React.Component {
                   coordinate={coords}
                   title={nameOfMarker}
                   description={addressOfMarker}
-                  pinColor={ !(markerId in this.state.conquered) ? '#ff0000' : '#2cd142'}
+                  pinColor={ conquered.includes(markerId) ? '#2cd142' : '#ff0000' }
                   onPress={() =>
                     Alert.alert(
                       'Redirect to website?',
                       'Or click cancel to stay in app',
                       [
                         {
-                          text: !(markerId in this.state.conquered) ? 'Mark as conquered' : 'Unmark as conquered',
+                          text: conquered.includes(markerId) ? 'Unmark as conquered' : 'Mark as conquered',
                           onPress: () => {
-                            if (!(markerId in this.state.conquered)){
-
-                              this.setState({ conquered: {
-                                ...this.state.conquered,
-                                [markerId]: marker.name
-                              }})
+                            if (!(conquered.includes(markerId))){
+                              const newConquered = [...conquered];
+                              newConquered.push(markerId);
+                              this.setState({ conquered: newConquered });
+                              AsyncStorage.setItem(markerId, marker.name);
                             }
-                            else if (markerId in this.state.conquered) {
-                              delete this.state.conquered[markerId];
-                              this.setState({ conquered: {...this.state.conquered }})
+                            else if (conquered.includes(markerId)) {
+                              const markerIndex = conquered.indexOf(markerId);
+                              const newConquered = [...conquered];
+                              newConquered.splice(markerIndex, 1);
+                              this.setState({ conquered: newConquered });
+                              AsyncStorage.removeItem(markerId);
                             }
-                            console.log('conquered: ', this.state.conquered);
-                            console.log('marker id: ', marker.id);
                           },
                         },
                         {
